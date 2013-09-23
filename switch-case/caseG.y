@@ -3,10 +3,11 @@
     #include<stdlib.h>
     int yylex(void);
     void yyerror(char *s);
+    extern char* yytext;
     
 %}
 
-%token S C NUM B ID D 
+%token S C NUM B ID D CHAR Q L
 %left OPER
 %right EQ
 
@@ -14,32 +15,39 @@
 Program         :   StatementBlock                              {printf("\nprogram");exit(0);}
                 ;
 
-StatementBlock  :   StatementBlock Statement                    {printf("\nStmtBlock");}
+StatementBlock  :   Statement StatementBlock                    
                 |
                 ;
 
 Statement       :   SwitchStatement                             
-                |   Expression ';'                              {printf("\nExp");}
-                |   MExpression ';'                             {printf("\nMathExp");}
+                |   Expression ';'                 {printf(";");}             
+                |   MExpression ';'                {printf(";");}                                  
                 ;
 
-SwitchStatement :   S '(' MExpression ')' '{' CaseBlock '}'     {printf("\nswitchStatement");}
+SwitchStatement :   S '(' MExpression ')' '{' CaseBlock '}'   {printf("}");}  
                 ;
 
-CaseBlock       :   CaseBlock CaseStatement 
-                |   
-                ;
-CaseStatement   :   C NUM ':' StatementBlock                    {printf("\ncaseBlock");}
-                |   C NUM ':' StatementBlock B ';'              {printf("\nbreakCaseBlock");}
-                |   D ':' StatementBlock                        {printf("\nDefaultCase");}
+CaseBlock       :   CaseStatementBlock DefaultStatement 
+                |   CaseStatementBlock        
                 ;
 
-Expression      :   ID EQ MExpression                           {printf("\nEQ Expression");}
+DefaultStatement   :   D L StatementBlock
+
+CaseStatementBlock : CaseStatement CaseStatementBlock
+                   |
+                   ;
+CaseStatement  :   C NUM L StatementBlock       
+               |   C CHAR L StatementBlock      
+               |   C NUM L StatementBlock B ';' 
+               |   C CHAR L StatementBlock B ';'
+               ;
+
+Expression      :   ID EQ MExpression                                                        
                 ;
 
-MExpression     :   MExpression OPER MExpression                {printf("\nMath Expression");}
-                |   ID                                          {printf("ID:%s", $$);}
-                |   NUM                                         {printf("NUM:%s",$$);}
+MExpression     :   MExpression OPER MExpression               
+                |   ID                                          
+                |   NUM                                         
                 ;
 %%
 

@@ -1,0 +1,21 @@
+switch (b+3) {
+    case 'a':
+        c = b+d;
+        d = 3+2;
+        break;
+    case 3:
+        a+b;
+        c+d;
+    case 4:
+        a=b;
+        b=dc;
+    case 5:
+        bc+ae;
+        break;
+    case 2:
+        c = b;
+        d = 1+2;
+        break;
+    default:
+        c = d;
+}

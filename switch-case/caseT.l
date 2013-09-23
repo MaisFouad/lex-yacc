@@ -9,15 +9,18 @@ op [+-/*^&|]
 %%
 
 [ \t\n]
-switch                          return S;
-case                            return C;
-break                           return B;
-default                         return D;
-{digit}+                        return NUM;
-{alpha}+({digit}|{alpha}|"_")*  return ID;
-[+-/*]                          return OPER;
-=                               return EQ;
-.   return yytext[0];
+switch                          {printf("var_expr="); return S;}
+case                            {printf(" if(var_expr==");return C;}
+break                           {printf(" else"); return B;}
+default                         {printf(" else{");return D;}
+{digit}+                        {printf("%s",yytext);return NUM;}
+{alpha}+({digit}|{alpha}|"_")*  {printf("%s",yytext);return ID;}
+\'.\'                           {printf("%s",yytext);return CHAR;}
+[+-/*^&|]                       {printf("%s",yytext);return OPER;}
+:                               {printf("{");return L;}
+=                               {printf("%s",yytext);return EQ;}
+.                               return yytext[0];
+        
 
 %%
 
