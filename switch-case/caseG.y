@@ -4,51 +4,60 @@
     int yylex(void);
     void yyerror(char *s);
     extern char* yytext;
+
     
 %}
 
-%token S C NUM B ID D CHAR Q L
+%token S C NUM B ID D CHAR Q L M I DEF AB DOT
 %left OPER
 %right EQ
 
 %%
-Program         :   StatementBlock                              {printf("\nprogram");exit(0);}
-                ;
+Program             :   StatementBlock                              {printf("program");exit(0);}
+                    ;
 
-StatementBlock  :   Statement StatementBlock                    
-                |
-                ;
+StatementBlock      :   Statement StatementBlock                   
+                    |								                
+                    ;
 
-Statement       :   SwitchStatement                             
-                |   Expression ';'                 {printf(";");}             
-                |   MExpression ';'                {printf(";");}                                  
-                ;
+Statement           :   SwitchStatement                             
+                    |   Expression ';'                              {printf(";");}             
+                    |   MExpression ';'                             {printf(";");}                                     
+		            |   ID M '(' ')' '{' Statement '}'              {printf("}");}
+		            |   I
+		            ;
 
-SwitchStatement :   S '(' MExpression ')' '{' CaseBlock '}'   {printf("}");}  
-                ;
 
-CaseBlock       :   CaseStatementBlock DefaultStatement 
-                |   CaseStatementBlock        
-                ;
 
-DefaultStatement   :   D L StatementBlock
+SwitchStatement     :   S '(' MExpression ')'                       {printf(";");}
+                    |   SwitchStatement '{' CaseBlock '}'           {printf("}"); }
+                    ;
 
-CaseStatementBlock : CaseStatement CaseStatementBlock
-                   |
-                   ;
-CaseStatement  :   C NUM L StatementBlock       
-               |   C CHAR L StatementBlock      
-               |   C NUM L StatementBlock B ';' 
-               |   C CHAR L StatementBlock B ';'
-               ;
+CaseBlock           :   CaseStatementBlock DefaultStatement 
+                    |   CaseStatementBlock                          {printf("}");}
+                    ;
 
-Expression      :   ID EQ MExpression                                                        
-                ;
+DefaultStatement    :   D L StatementBlock   
+				    ;
 
-MExpression     :   MExpression OPER MExpression               
-                |   ID                                          
-                |   NUM                                         
-                ;
+CaseStatementBlock  :   CaseStatement CaseStatementBlock 
+                    |
+                    ;
+
+CaseStatement       :   C NUM L StatementBlock       
+                    |   C CHAR L StatementBlock      
+                    |   C NUM L StatementBlock B ';' 
+                    |   C CHAR L StatementBlock B ';'
+                    ;
+
+Expression          :   ID EQ MExpression
+                    |   ID EQ FunctionStatement
+                    ;
+
+MExpression         :   MExpression OPER MExpression              
+                    |   ID                                         
+                    |   NUM                                       
+                    ;
 %%
 
 void yyerror(char *s){
@@ -56,5 +65,6 @@ void yyerror(char *s){
 }
 int main(){
     yyparse();
+ //   printf("var_exp%d=%s",count++,exp); 
     return 0;
 }
